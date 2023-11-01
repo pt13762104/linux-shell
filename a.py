@@ -2,6 +2,8 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.shortcuts import clear
+from datetime import datetime
+from time import localtime, strftime
 import os, glob
 
 
@@ -23,7 +25,7 @@ def expand_path(pth):
 
 history = InMemoryHistory()
 session = PromptSession(history=history, auto_suggest=AutoSuggestFromHistory())
-
+start_time = datetime.now()
 while True:
     cmd = session.prompt(os.getcwd() + "$ ").split()
     if not len(cmd):
@@ -91,5 +93,13 @@ Commands:
             print(j)
     elif _cmd == "clear":
         clear()
+    elif _cmd == "uptime":
+        td = datetime.now() - start_time
+        hours = td.seconds // 3600
+        mins = (td.seconds % 3600) // 60
+        seconds = td.seconds % 60
+        print(f"{td.days} days, {hours} hours, {mins} minutes, {seconds} seconds")
+    elif _cmd == "date":
+        print(strftime("%a, %d %b %Y %H:%M:%S %z", localtime()))
     else:
         print("Command " + _cmd + " not found.")
