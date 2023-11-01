@@ -3,7 +3,7 @@ from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.shortcuts import clear
 from datetime import datetime
-from time import localtime, strftime
+from time import localtime, strftime, clock_gettime, CLOCK_BOOTTIME
 import os, glob
 
 
@@ -86,7 +86,9 @@ Commands:
 - cd <dir> : change the working directory to <dir>.
 - exit: exit the shell.
 - history: show the command history.
-- clear: clears the screen."""
+- clear: clears the screen.
+- uptime: shows uptime.
+- date: shows current date and time."""
         )
     elif _cmd == "history":
         for j in history.get_strings():
@@ -94,11 +96,18 @@ Commands:
     elif _cmd == "clear":
         clear()
     elif _cmd == "uptime":
-        td = datetime.now() - start_time
-        hours = td.seconds // 3600
-        mins = (td.seconds % 3600) // 60
-        seconds = td.seconds % 60
-        print(f"{td.days} days, {hours} hours, {mins} minutes, {seconds} seconds")
+        try:
+            td = int(clock_gettime(CLOCK_BOOTTIME))
+            hours = (td % 86400) // 3600
+            mins = (td % 3600) // 60
+            seconds = td % 60
+            print(f"{td//86400} days, {hours} hours, {mins} minutes, {seconds} seconds")
+        except OSError:
+            td = datetime.now() - start_time
+            hours = td.seconds // 3600
+            mins = (td.seconds % 3600) // 60
+            seconds = td.seconds % 60
+            print(f"{td.days} days, {hours} hours, {mins} minutes, {seconds} seconds")
     elif _cmd == "date":
         print(strftime("%a, %d %b %Y %H:%M:%S %z", localtime()))
     else:
