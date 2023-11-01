@@ -25,7 +25,7 @@ history = InMemoryHistory()
 session = PromptSession(history=history, auto_suggest=AutoSuggestFromHistory())
 
 while True:
-    cmd = session.prompt("a@a:" + os.getcwd() + "$ ").split()
+    cmd = session.prompt(os.getcwd() + "$ ").split()
     if not len(cmd):
         continue
     _cmd = cmd[0]
@@ -37,36 +37,17 @@ while True:
             for i in res:
                 print(i, end=" ")
             print()
-        elif len(paths[1]) == 1:
-            p = paths[1][0]
-            if os.path.isdir(p):
-                res = os.listdir(p)
-            else:
-                res = [p]
-            for i in res:
-                print(i)
         else:
-            if len(paths[0]["files"]) and len(paths[0]["dirs"]):
-                for i in paths[0]["files"]:
-                    print(i, end=" ")
+            for i in paths[0]["files"]:
+                print(i, end=" ")
+            if len(paths[0]["files"]):
                 print()
-                for i in paths[0]["dirs"]:
-                    rs = os.listdir(i)
-                    print(i + ":")
-                    for j in rs:
-                        print(j, end=" ")
-                    print()
-            elif len(paths[0]["files"]):
-                for i in paths[1]:
-                    print(i, end=" ")
+            for i in paths[0]["dirs"]:
+                rs = os.listdir(i)
+                print(i + ":")
+                for j in rs:
+                    print(j, end=" ")
                 print()
-            else:
-                for i in paths[0]["dirs"]:
-                    rs = os.listdir(i)
-                    print(i + ":")
-                    for j in rs:
-                        print(j, end=" ")
-                    print()
     elif _cmd == "exit":
         break
     elif _cmd == "cd":
